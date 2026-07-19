@@ -16,3 +16,19 @@ export async function buscarFilme(titulo) {
   const dados = await resposta.json();
   return dados.results[0] ?? null; // pega o primeiro resultado da busca
 }
+
+export async function buscarDetalhesFilme(id) {
+  const url = `https://api.themoviedb.org/3/movie/${id}?language=pt-BR`;
+
+  const resposta = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
+    },
+  });
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ao buscar detalhes na TMDB: ${resposta.status}`);
+  }
+
+  return resposta.json();
+}

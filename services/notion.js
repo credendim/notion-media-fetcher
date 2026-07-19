@@ -1,6 +1,6 @@
 function montarPropriedadesFilme(filme) {
-  const capaUrl = filme.poster_path
-    ? `https://image.tmdb.org/t/p/w500${filme.poster_path}`
+  const capaUrl = filme.backdrop_path
+    ? `https://image.tmdb.org/t/p/w500${filme.backdrop_path}`
     : undefined;
 
   return {
@@ -96,4 +96,66 @@ export async function buscarPagina(pageId) {
 export function extrairTitulo(pagina) {
   const tituloProp = pagina.properties['Título'];
   return tituloProp?.title?.[0]?.plain_text ?? '';
+}
+
+function montarBlocosFilme(detalhes) {
+  const blocos = [
+    {
+      object: 'block',
+      type: 'heading_2',
+      heading_2: {
+        rich_text: [{ text: { content: 'Sinopse' } }],
+      },
+    },
+    {
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [{ text: { content: detalhes.overview || 'Sem sinopse disponível.' } }],
+      },
+    },
+  ];
+
+  if (detalhes.genres && detalhes.genres.length > 0) {
+    blocos.push({
+      object: 'block',
+      type: 'heading_2',
+      heading_2: {
+        rich_text: [{ text: { content: 'Gêneros' } }],
+      },
+    });
+
+    for (const genero of detalhes.genres) {
+      blocos.push({
+        object: 'block',
+        type: 'bulleted_list_item',
+        bulleted_list_item: {
+          rich_text: [{ text: { content: genero.name } }],
+        },
+      });
+    }
+  }
+
+  return blocos;
+}
+
+export async function adicionarConteudoPagina(pageId, detalhes) {
+  const blocos = montarBlocosFilme(detalhes);
+
+  const resposta = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ children: blocos }),
+  });
+
+  if (!resposta.ok) {
+    const erro = await resposta.text();
+    throw new Error(`Erro ao adicionar conteúdo na página: ${resposta.status} - ${erro}`);
+  }
+
+  return resposta.json();
 }
