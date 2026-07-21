@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import Fastify from 'fastify';
-import { buscarFilme } from './services/tmdb.js';
-import { criarPaginaFilme } from './services/notion.js';
+import { buscarFilme, buscarDetalhesFilme, extrairInformacoesFilme } from './services/tmdb.js';
+import { buscarPagina, extrairTitulo, atualizarPaginaFilme, adicionarConteudoPagina, criarPaginaFilme } from './services/notion.js';
 import { registrarRotaWebhook } from './services/webhooks.js';
 
 const app = Fastify({ logger: true });
@@ -25,7 +25,12 @@ app.post('/filmes', async (request, reply) => {
       return reply.status(404).send({ erro: 'Filme não encontrado na TMDB.' });
     }
 
+    const detalhes = await buscarDetalhesFilme(filme.id);
+    const info = extrairInformacoesFilme(detalhes);
+
     const pagina = await criarPaginaFilme(filme);
+    await adicionarConteudoPagina(pagina.id, detalhes.overview, info);
+
     return { mensagem: 'Página criada com sucesso!', pagina_id: pagina.id };
   } catch (erro) {
     app.log.error(erro);

@@ -1,5 +1,5 @@
-import { buscarFilme } from './tmdb.js';
-import { buscarPagina, extrairTitulo, atualizarPaginaFilme } from './notion.js';
+import { buscarFilme, buscarDetalhesFilme, extrairInformacoesFilme } from './tmdb.js';
+import { buscarPagina, extrairTitulo, atualizarPaginaFilme, adicionarConteudoPagina } from './notion.js';
 
 export function registrarRotaWebhook(app) {
   app.post('/webhooks/notion', async (request, reply) => {
