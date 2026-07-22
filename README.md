@@ -35,7 +35,7 @@ A automação preenche automaticamente na página do Notion:
 
 - **[Node.js](https://nodejs.org/)** — runtime
 - **[Fastify](https://fastify.dev/)** — framework web
-- **[Notion API]([https://github.com/makenotion/notion-sdk-js](https://developers.notion.com/guides/get-started/overview))** — Atomação do Notion
+- **[Notion API](https://developers.notion.com/guides/get-started/overview)** — Atomação do Notion
 - **[TMDB API](https://www.themoviedb.org/documentation/api)** — dados de filmes
 
 ## 📋 Pré-requisitos
