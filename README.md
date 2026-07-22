@@ -1,4 +1,4 @@
-# 🎬 Atualização de dados automatica no Notion
+# 🎬 Atualização de dados automática no Notion
 
 Automação que transforma uma simples página do Notion em uma ficha completa de filme, usando dados da API do TMDB.
 
